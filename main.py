@@ -9,6 +9,8 @@ screen = pygame.display.set_mode((800, 400), pygame.RESIZABLE)
 screen.fill((255, 255, 255))
 clock = pygame.time.Clock()
 
+pygame.mixer.Sound("sounds/music.mp3").play(loops=-1)
+
 player = pygame.sprite.GroupSingle(Player())
 
 while 1:

@@ -22,72 +22,82 @@ class Player(Entity):
         self.dashing = 0
         self.last_dash = 0
 
+    def animate_run(self, direction):
+        self.frame += 0.2
+        if self.frame >= len(self.run_animation):
+            self.frame = 0
+        if direction == "RIGHT":
+            self.image = self.run_animation[int(self.frame)]
+        elif direction == "LEFT":
+            self.image = pygame.transform.flip(
+                self.run_animation[int(self.frame)], True, False)
+
+    def animate_jump(self, direction):
+        if direction == "RIGHT":
+            self.image = self.jump_frame
+        elif direction == "LEFT":
+            self.image = pygame.transform.flip(
+                self.jump_frame, True, False)
+
+    def animate_idle(self):
+        self.frame += 0.04
+        if self.frame >= len(self.idle_animation):
+            self.frame = 0
+        self.image = self.idle_animation[int(self.frame)]
+
+    def animate_dash(self, direction):
+        if direction == "RIGHT":
+            self.image = self.dash_frame
+        elif direction == "LEFT":
+            self.image = pygame.transform.flip(
+                self.dash_frame, True, False)
+
     def movement(self):
-        def animate_run(direction):
-            self.frame += 0.2
-            if self.frame >= len(self.run_animation):
-                self.frame = 0
-            if direction == "RIGHT":
-                self.image = self.run_animation[int(self.frame)]
-            elif direction == "LEFT":
-                self.image = pygame.transform.flip(
-                    self.run_animation[int(self.frame)], True, False)
-
-        def animate_jump(direction):
-            if direction == "RIGHT":
-                self.image = self.jump_frame
-            elif direction == "LEFT":
-                self.image = pygame.transform.flip(
-                    self.jump_frame, True, False)
-
-        def animate_idle():
-            self.frame += 0.04
-            if self.frame >= len(self.idle_animation):
-                self.frame = 0
-            self.image = self.idle_animation[int(self.frame)]
-
-        def animate_dash(direction):
-            if direction == "RIGHT":
-                self.image = self.dash_frame
-            elif direction == "LEFT":
-                self.image = pygame.transform.flip(
-                    self.dash_frame, True, False)
-
         keys = pygame.key.get_pressed()
-        if not int(self.dashing):
-            if keys[pygame.K_a]:
-                if keys[pygame.K_RIGHTBRACKET] and pygame.time.get_ticks() - self.last_dash >= 1000:
-                    self.last_dash = pygame.time.get_ticks()
-                    self.dashing = 5
-                animate_run("LEFT")
-                self.rect.x -= 5
-            elif keys[pygame.K_d]:
-                if keys[pygame.K_RIGHTBRACKET] and pygame.time.get_ticks() - self.last_dash >= 1000:
-                    self.last_dash = pygame.time.get_ticks()
-                    self.dashing = 5
-                animate_run("RIGHT")
-                self.rect.x += 5
-            else:
-                animate_idle()
+        left = keys[pygame.K_a] or keys[pygame.K_LEFT]
+        right = keys[pygame.K_d] or keys[pygame.K_RIGHT]
+        up = keys[pygame.K_w] or keys[pygame.K_UP] or keys[pygame.K_SPACE]
+        dash = keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]
+        dash_cooldown = dash and (
+            pygame.time.get_ticks() - self.last_dash) >= 5000
 
-            if keys[pygame.K_SPACE] and self.rect.bottom >= 300:
+        if not int(self.dashing):
+            if (left and right) or (not left and not right):
+                self.animate_idle()
+            elif left:
+                if dash and dash_cooldown:
+                    self.last_dash = pygame.time.get_ticks()
+                    self.dashing = 7
+                self.animate_run("LEFT")
+                self.rect.x -= 5
+            else:
+                if dash and dash_cooldown:
+                    self.last_dash = pygame.time.get_ticks()
+                    self.dashing = 5
+                self.animate_run("RIGHT")
+                self.rect.x += 5
+
+            if up and self.rect.bottom >= 300:
                 self.gravity = -15
 
             if self.rect.bottom < 300:
-                if keys[pygame.K_a]:
-                    animate_jump("LEFT")
+                if left:
+                    self.animate_jump("LEFT")
                 else:
-                    animate_jump("RIGHT")
+                    self.animate_jump("RIGHT")
         else:
-            if keys[pygame.K_a] and keys[pygame.K_RIGHTBRACKET]:
-                animate_dash("LEFT")
-                self.rect.x -= 10
-            elif keys[pygame.K_d] and keys[pygame.K_RIGHTBRACKET]:
-                animate_dash("RIGHT")
-                self.rect.x += 10
+            if dash:
+                if (not left and not right) or (left and right):
+                    self.dashing = 0
+                elif left:
+                    self.animate_dash("LEFT")
+                    self.rect.x -= 20
+                else:
+                    self.animate_dash("RIGHT")
+                    self.rect.x += 20
+                self.dashing -= 0.2
             else:
                 self.dashing = 0
-            self.dashing -= 0.2
 
     def apply_gravity(self):
         if not int(self.dashing):
