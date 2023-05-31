@@ -1,12 +1,12 @@
 import pygame
-from utils.graphics import load_graphic
+from utils import load_graphic
+from classes.entity import Entity
 
-graphics_base_path = "graphics/player/"
+graphics_base_path = "assets/player/"
 
 
-class Player(pygame.sprite.Sprite):
+class Player(Entity):
     def __init__(self):
-        super().__init__()
         self.run_animation = [load_graphic(
             f"{graphics_base_path}run/run_{i}.png") for i in range(1, 6)]
         self.jump_frame = load_graphic(
@@ -15,16 +15,15 @@ class Player(pygame.sprite.Sprite):
             f"{graphics_base_path}idle/idle_{i}.png") for i in range(1, 3)]
         self.dash_frame = load_graphic(
             f"{graphics_base_path}dash/dash_1.png")
+
+        super().__init__(self.idle_animation[0])
         self.image = self.idle_animation[0]
         self.rect = self.image.get_rect()
-        self.frame = 0
-        self.gravity = 0
         self.dashing = 0
         self.last_dash = 0
 
     def movement(self):
         def animate_run(direction):
-            print(self.frame)
             self.frame += 0.2
             if self.frame >= len(self.run_animation):
                 self.frame = 0
@@ -92,10 +91,7 @@ class Player(pygame.sprite.Sprite):
 
     def apply_gravity(self):
         if not int(self.dashing):
-            self.gravity += 1
-            self.rect.y += self.gravity
-            if self.rect.bottom >= 300:
-                self.rect.bottom = 300
+            super().apply_gravity()
         else:
             self.gravity = 0
 

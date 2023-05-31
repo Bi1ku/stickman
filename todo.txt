@@ -1,0 +1,3 @@
+TODO:
+- Add keybinds as constants
+- Add menu
