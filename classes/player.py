@@ -8,16 +8,14 @@ graphics_base_path = "assets/player/"
 
 class Player(Entity):
     def __init__(self):
-        self.run_animation = [load_asset(
-            f"{graphics_base_path}run/run_{i}.png") for i in range(1, 6)]
-        self.jump_frame = load_asset(
-            f"{graphics_base_path}jump/jump_1.png")
-        self.idle_animation = [load_asset(
-            f"{graphics_base_path}idle/idle_{i}.png") for i in range(1, 3)]
-        self.dash_frame = load_asset(
-            f"{graphics_base_path}dash/dash_1.png")
+        self.animations = {
+            "run": [load_asset(f"{graphics_base_path}run/run_{i}.png") for i in range(1, 6)],
+            "jump": load_asset(f"{graphics_base_path}jump/jump_1.png"),
+            "idle": [load_asset(f"{graphics_base_path}idle/idle_{i}.png") for i in range(1, 3)],
+            "dash": load_asset(f"{graphics_base_path}dash/dash_1.png")
+        }
 
-        super().__init__(self.idle_animation[0], (0, 0))
+        super().__init__(self.animations["idle"][0], (0, 0))
         self.dashing = 0
         self.last_dash = 0
         self.lazers = pygame.sprite.Group()
@@ -25,32 +23,36 @@ class Player(Entity):
 
     def run(self):
         self.frame += 0.2
-        if self.frame >= len(self.run_animation):
+        if self.frame >= len(self.animations["run"]):
             self.frame = 0
         if self.direction == "r":
-            self.image = self.run_animation[int(self.frame)]
+            self.image = self.animations["run"][int(self.frame)]
             self.rect.x += 5
         else:
             self.image = pygame.transform.flip(
-                self.run_animation[int(self.frame)], True, False)
+                self.animations["run"][int(self.frame)], True, False)
             self.rect.x -= 5
 
     def jump(self):
-        self.image = self.jump_frame if self.direction == "r" else pygame.transform.flip(
-            self.jump_frame, True, False)
+        if self.direction == "r":
+            self.image = self.animations["jump"]
+        else:
+            self.image = pygame.transform.flip(
+                self.animations["jump"], True, False)
 
     def idle(self):
-        self.frame = 0 if self.frame >= len(
-            self.idle_animation) - 1 else self.frame + 0.04
-        self.image = self.idle_animation[int(self.frame)]
+        self.frame += 0.02
+        if self.frame >= len(self.animations["idle"]):
+            self.frame = 0
+        self.image = self.animations["idle"][int(self.frame)]
 
     def dash(self):
         if self.direction == "r":
-            self.image = self.dash_frame
+            self.image = self.animations["dash"]
             self.rect.x += 20
         else:
             self.image = pygame.transform.flip(
-                self.dash_frame, True, False)
+                self.animations["dash"], True, False)
             self.rect.x -= 20
 
     def inputs(self):
@@ -78,7 +80,7 @@ class Player(Entity):
                 self.run()
                 if dash and dash_cooldown:
                     self.last_dash = time
-                    self.dashing = 7
+                    self.dashing = 5
 
             if up and self.rect.bottom >= 600:
                 self.gravity = -15

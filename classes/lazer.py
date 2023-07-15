@@ -9,4 +9,5 @@ class Lazer(Entity):
         super().__init__(self.image, pos, direction)
 
     def update(self):
-        self.rect.x = self.rect.x + 10 if self.direction == "r" else self.rect.x - 10
+        self.move()
+        self.destroy()

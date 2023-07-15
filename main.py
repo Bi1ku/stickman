@@ -1,11 +1,12 @@
 from classes.player import Player
 import pygame
 from sys import exit
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
 pygame.init()
 pygame.display.set_caption("Stickman")
 
-screen = pygame.display.set_mode((1200, 700), pygame.RESIZABLE)
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 screen.fill((255, 255, 255))
 clock = pygame.time.Clock()
 
