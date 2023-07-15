@@ -1,12 +1,13 @@
 import pygame
+from classes.moveable import Moveable
 from utils import load_asset
-from classes.entity import Entity
 from classes.lazer import Lazer
+from constants import _
 
 graphics_base_path = "assets/player/"
 
 
-class Player(Entity):
+class Player(Moveable):
     def __init__(self):
         self.animations = {
             "run": [load_asset(f"{graphics_base_path}run/run_{i}.png") for i in range(1, 6)],
@@ -15,7 +16,7 @@ class Player(Entity):
             "dash": load_asset(f"{graphics_base_path}dash/dash_1.png")
         }
 
-        super().__init__(self.animations["idle"][0], (0, 0))
+        super().__init__(self.animations["idle"][0], (0, 0), _, "r")
         self.dashing = 0
         self.last_dash = 0
         self.lazers = pygame.sprite.Group()

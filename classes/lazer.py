@@ -1,8 +1,8 @@
-from classes.entity import Entity
 import pygame
+from classes.moveable import Moveable
 
 
-class Lazer(Entity):
+class Lazer(Moveable):
     def __init__(self, pos, direction):
         self.image = pygame.Surface((10, 5))
         self.image.fill((255, 0, 0))
