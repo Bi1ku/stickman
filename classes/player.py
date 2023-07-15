@@ -89,8 +89,12 @@ class Player(Moveable):
                 self.jump()
 
             if shoot and time - self.last_shot >= 250:
-                self.lazers.add(
-                    Lazer((self.rect.topright[0], self.rect.topright[1] + 25), self.direction))
+                if self.direction == "r":
+                    self.lazers.add(
+                        Lazer((self.rect.topright[0] + 50, self.rect.topright[1] + 30), self.direction))
+                else:
+                    self.lazers.add(
+                        Lazer((self.rect.topleft[0], self.rect.topleft[1] + 30), self.direction))
                 self.last_shot = time
         else:
             if dash:

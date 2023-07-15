@@ -18,7 +18,7 @@ class Moveable(Entity, ABC):
             self.rect.bottom = 600
 
     def destroy(self):
-        if self.rect.right >= SCREEN_WIDTH or self.rect.left <= 0:
+        if self.rect.left >= SCREEN_WIDTH or self.rect.right <= 0:
             self.kill()
 
     def move(self):
