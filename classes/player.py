@@ -4,23 +4,32 @@ from utils import load_asset
 from classes.lazer import Lazer
 from constants import _
 
-graphics_base_path = "assets/player/"
+GRAPHICS_BASE_PATH = "assets/player/"
 
 
 class Player(Moveable):
     def __init__(self):
         self.animations = {
-            "run": [load_asset(f"{graphics_base_path}run/run_{i}.png") for i in range(1, 6)],
-            "jump": load_asset(f"{graphics_base_path}jump/jump_1.png"),
-            "idle": [load_asset(f"{graphics_base_path}idle/idle_{i}.png") for i in range(1, 3)],
-            "dash": load_asset(f"{graphics_base_path}dash/dash_1.png")
+            "run": [load_asset(f"{GRAPHICS_BASE_PATH}run/run_{i}.png") for i in range(1, 6)],
+            "jump": load_asset(f"{GRAPHICS_BASE_PATH}jump/jump_1.png"),
+            "idle": [load_asset(f"{GRAPHICS_BASE_PATH}idle/idle_{i}.png") for i in range(1, 3)],
+            "dash": load_asset(f"{GRAPHICS_BASE_PATH}dash/dash_1.png")
         }
 
         super().__init__(self.animations["idle"][0], (0, 0), _, "r")
-        self.dashing = 0
-        self.last_dash = 0
         self.lazers = pygame.sprite.Group()
+
+        # Variables
+        self.speed = 5
+
+        # Cooldowns
+        self.last_dash = 0
         self.last_shot = 0
+        self.last_jump = 0
+
+        # Animation Trackers
+        self.dashing = 0
+        self.jumping = True
 
     def run(self):
         self.frame += 0.2
@@ -28,11 +37,11 @@ class Player(Moveable):
             self.frame = 0
         if self.direction == "r":
             self.image = self.animations["run"][int(self.frame)]
-            self.rect.x += 5
+            self.rect.x += self.speed
         else:
             self.image = pygame.transform.flip(
                 self.animations["run"][int(self.frame)], True, False)
-            self.rect.x -= 5
+            self.rect.x -= self.speed
 
     def jump(self):
         if self.direction == "r":
@@ -65,7 +74,6 @@ class Player(Moveable):
         shoot = keys[pygame.K_e]
 
         time = pygame.time.get_ticks()
-        dash_cooldown = time - self.last_dash >= 5000
 
         if not int(self.dashing):
             if (left and right) or (not left and not right):
@@ -73,22 +81,27 @@ class Player(Moveable):
             elif right:
                 self.direction = "r"
                 self.run()
-                if dash and dash_cooldown:
+                if dash and time - self.last_dash >= 5000:
                     self.last_dash = time
                     self.dashing = 5
             else:
                 self.direction = "l"
                 self.run()
-                if dash and dash_cooldown:
+                if dash and time - self.last_dash >= 5000:
                     self.last_dash = time
                     self.dashing = 5
 
-            if up and self.rect.bottom >= 600:
-                self.gravity = -15
-            if self.rect.bottom < 600:
+            if up and self.rect.bottom >= 600 and time - self.last_jump >= 750:
+                self.last_jump = time
+                self.gravity = -17
+                self.jumping = True
+            elif self.rect.bottom == 600:
+                self.jumping = False
+
+            if self.jumping:
                 self.jump()
 
-            if shoot and time - self.last_shot >= 250:
+            if shoot and time - self.last_shot >= 500:
                 if self.direction == "r":
                     self.lazers.add(
                         Lazer((self.rect.topright[0] + 50, self.rect.topright[1] + 30), self.direction))
@@ -105,7 +118,7 @@ class Player(Moveable):
                 self.dashing = 0
 
     def apply_gravity(self):
-        if not int(self.dashing):
+        if not int(self.dashing) and self.jumping:
             super().apply_gravity()
         else:
             self.gravity = 0

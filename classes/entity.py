@@ -1,7 +1,7 @@
-import pygame
+from pygame.sprite import Sprite
 
 
-class Entity(pygame.sprite.Sprite):
+class Entity(Sprite):
     def __init__(self, image, pos):
         super().__init__()
         self.image = image

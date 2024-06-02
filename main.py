@@ -1,6 +1,8 @@
+from classes.barrier import Barrier
 from classes.player import Player
 import pygame
 from sys import exit
+from classes.tile import Tile
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
 pygame.init()
@@ -12,7 +14,14 @@ clock = pygame.time.Clock()
 
 pygame.mixer.Sound("sounds/music.mp3").play(loops=-1)
 
-player = pygame.sprite.GroupSingle(Player())
+tiles = pygame.sprite.Group()
+tiles.add(Tile((500, 600)))
+
+player = Player()
+player_group = pygame.sprite.GroupSingle()
+player_group.add(player)
+
+barrier = Barrier(player, tiles)
 
 while 1:
     for event in pygame.event.get():
@@ -22,8 +31,12 @@ while 1:
 
     screen.fill((255, 255, 255))
 
-    player.draw(screen)
-    player.update()
+    tiles.draw(screen)
+
+    player_group.draw(screen)
+    player_group.update()
+
+    barrier.check_collisions()
 
     pygame.display.update()
     clock.tick(60)
