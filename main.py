@@ -17,6 +17,7 @@ clock = pygame.time.Clock()
 
 tiles = pygame.sprite.Group()
 tiles.add(Tile((300, 550), "l"))
+tiles.add(Tile((400, 550), "l"))
 
 player = Player()
 player_group = pygame.sprite.GroupSingle()

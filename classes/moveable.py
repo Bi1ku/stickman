@@ -5,6 +5,8 @@ import pygame
 
 
 class Moveable(Entity, ABC):
+    speed = 5
+
     def __init__(self, image, pos, direction):
         super().__init__(image, pos)
         self.frame = 0
@@ -12,7 +14,6 @@ class Moveable(Entity, ABC):
         self.direction = direction
 
         # Player Variables
-        self.speed = 5
         self.dashing = 0
         self.last_dash = 0
 
@@ -47,10 +48,10 @@ class Moveable(Entity, ABC):
                 self.last_dash = time
                 self.dashing = 5
             elif right:
-                self.rect.x -= self.speed
+                self.rect.x -= Moveable.speed
                 self.direction = "r"
             elif left:
-                self.rect.x += self.speed
+                self.rect.x += Moveable.speed
                 self.direction = "l"
 
     @abstractmethod
