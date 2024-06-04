@@ -8,25 +8,32 @@ class Barrier():
         self.barrier = barrier
 
     def check_collisions(self):
+        timer = pygame.time.get_ticks()
+
         collisions = pygame.sprite.spritecollide(
             self.player, self.barrier, False)
 
         if collisions:
             collision_obj = collisions[0]
 
-            if collision_obj.rect.bottom >= self.player.rect.bottom and self.player.jumping and self.player.gravity > 0:
+            if self.player.jumping:
+                collision_obj.speed = 5
                 self.player.jumping = False
                 self.player.gravity = 0
-            elif collision_obj.rect.left <= self.player.rect.right <= collision_obj.rect.left + 3:
-                if self.player.direction == 'l':
-                    collision_obj.speed = 0
-                else:
-                    self.player.speed = 0
-            elif collision_obj.rect.right >= self.player.rect.left >= collision_obj.rect.right - 3:
-                if self.player.direction == 'r':
-                    collision_obj.speed = 0
-                else:
-                    self.player.speed = 0
+
+            else:
+                if collision_obj.rect.left <= self.player.rect.right <= collision_obj.rect.left + 3:
+                    if self.player.direction == 'r':
+                        collision_obj.speed = 0
+                    else:
+                        collision_obj.speed = 5
+
+                elif collision_obj.rect.right >= self.player.rect.left >= collision_obj.rect.right - 3:
+                    if self.player.direction == 'l':
+                        collision_obj.speed = 0
+                    else:
+                        collision_obj.speed = 5
+
         else:
             self.player.speed = 5
             self.player.jumping = True

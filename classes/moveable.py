@@ -13,7 +13,7 @@ class Moveable(Entity, ABC):
 
         # Player Variables
         self.speed = 5
-        self.dashing = 5
+        self.dashing = 0
         self.last_dash = 0
 
     def apply_gravity(self):
@@ -29,6 +29,8 @@ class Moveable(Entity, ABC):
     def move(self):
         keys = pygame.key.get_pressed()
         dash = keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]
+        right = keys[pygame.K_d] or keys[pygame.K_RIGHT]
+        left = keys[pygame.K_a] or keys[pygame.K_LEFT]
         time = pygame.time.get_ticks()
 
         if int(self.dashing):
@@ -37,16 +39,19 @@ class Moveable(Entity, ABC):
             else:
                 self.rect.x += 20
 
+            self.dashing = 0 if (not left and not right) or (
+                left and right) else self.dashing - 0.2
+
         else:
-            if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
-                self.rect.x -= self.speed
-                self.direction = "r"
-            elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
-                self.rect.x += self.speed
-                self.direction = "l"
-            elif dash and time - self.last_dash >= 5000:
+            if dash and time - self.last_dash >= 5000:
                 self.last_dash = time
                 self.dashing = 5
+            elif right:
+                self.rect.x -= self.speed
+                self.direction = "r"
+            elif left:
+                self.rect.x += self.speed
+                self.direction = "l"
 
     @abstractmethod
     def update(self):
