@@ -1,13 +1,13 @@
 import pygame
-from classes.moveable import Moveable
+from classes.entity import Entity
 from utils import load_asset
 from classes.lazer import Lazer
-from constants import _
+from constants import SCREEN_WIDTH, _
 
 GRAPHICS_BASE_PATH = "assets/player/"
 
 
-class Player(Moveable):
+class Player(Entity):
     def __init__(self):
         self.animations = {
             "run": [load_asset(f"{GRAPHICS_BASE_PATH}run/run_{i}.png") for i in range(1, 6)],
@@ -16,11 +16,11 @@ class Player(Moveable):
             "dash": load_asset(f"{GRAPHICS_BASE_PATH}dash/dash_1.png")
         }
 
-        super().__init__(self.animations["idle"][0], (0, 0), _, "r")
+        super().__init__(self.animations["idle"][0], (SCREEN_WIDTH / 2, 60))
         self.lazers = pygame.sprite.Group()
 
         # Variables
-        self.speed = 5
+        self.gravity = 0
 
         # Cooldowns
         self.last_dash = 0
@@ -30,6 +30,8 @@ class Player(Moveable):
         # Animation Trackers
         self.dashing = 0
         self.jumping = True
+        self.frame = 0
+        self.direction = "r"
 
     def run(self):
         self.frame += 0.2
@@ -37,11 +39,9 @@ class Player(Moveable):
             self.frame = 0
         if self.direction == "r":
             self.image = self.animations["run"][int(self.frame)]
-            self.rect.x += self.speed
         else:
             self.image = pygame.transform.flip(
                 self.animations["run"][int(self.frame)], True, False)
-            self.rect.x -= self.speed
 
     def jump(self):
         if self.direction == "r":
@@ -59,11 +59,9 @@ class Player(Moveable):
     def dash(self):
         if self.direction == "r":
             self.image = self.animations["dash"]
-            self.rect.x += 20
         else:
             self.image = pygame.transform.flip(
                 self.animations["dash"], True, False)
-            self.rect.x -= 20
 
     def inputs(self):
         keys = pygame.key.get_pressed()
@@ -119,7 +117,10 @@ class Player(Moveable):
 
     def apply_gravity(self):
         if not int(self.dashing) and self.jumping:
-            super().apply_gravity()
+            self.gravity += 1
+            self.rect.bottom += self.gravity
+            if self.rect.bottom >= 600:
+                self.rect.bottom = 600
         else:
             self.gravity = 0
 

@@ -19,12 +19,12 @@ class Barrier():
                 self.player.gravity = 0
             elif collision_obj.rect.left <= self.player.rect.right <= collision_obj.rect.left + 3:
                 if self.player.direction == 'l':
-                    self.player.speed = 5
+                    collision_obj.speed = 0
                 else:
                     self.player.speed = 0
             elif collision_obj.rect.right >= self.player.rect.left >= collision_obj.rect.right - 3:
                 if self.player.direction == 'r':
-                    self.player.speed = 5
+                    collision_obj.speed = 0
                 else:
                     self.player.speed = 0
         else:
