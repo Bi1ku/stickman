@@ -6,6 +6,7 @@ import pygame
 
 class Moveable(Entity, ABC):
     speed = 5
+    dash_speed = 20
 
     def __init__(self, image, pos, direction):
         super().__init__(image, pos)
@@ -36,9 +37,9 @@ class Moveable(Entity, ABC):
 
         if int(self.dashing):
             if self.direction == "r":
-                self.rect.x -= 20
+                self.rect.x -= Moveable.dash_speed
             else:
-                self.rect.x += 20
+                self.rect.x += Moveable.dash_speed
 
             self.dashing = 0 if (not left and not right) or (
                 left and right) else self.dashing - 0.2
