@@ -5,8 +5,6 @@ from classes.moveable import Moveable
 
 
 class Barrier():
-    standing = False
-
     def __init__(self, player, barrier):
         self.player = player
         self.barrier = barrier
@@ -26,11 +24,7 @@ class Barrier():
             self.player, self.barrier, False)
 
         if collisions:
-            collision_obj = collisions[0]
-            if int(self.player.dashing):
-                print(collision_obj.rect.left, self.player.rect.right)
-
-            if not Barrier.standing:
+            for collision_obj in collisions:
                 if collision_obj.rect.left <= self.player.rect.right <= collision_obj.rect.left + 20:
                     if self.player.direction == 'r':
                         Barrier.zero_speed()
@@ -43,7 +37,10 @@ class Barrier():
                     else:
                         Barrier.reset_speed()
 
-                elif self.player.jumping:
+                elif collision_obj.rect.bottom + 10 >= self.player.rect.top >= collision_obj.rect.top - 10:
+                    self.player.gravity = 10
+
+                elif self.player.jumping and collision_obj.rect.bottom >= self.player.rect.top:
                     self.player.jumping = False
                     Barrier.standing = True
 

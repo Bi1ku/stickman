@@ -16,8 +16,8 @@ clock = pygame.time.Clock()
 # pygame.mixer.Sound("sounds/music.mp3").play(loops=-1)
 
 tiles = pygame.sprite.Group()
-tiles.add(Tile((300, 550), "l"))
-tiles.add(Tile((400, 550), "l"))
+tiles.add(Tile((450, 550), "l"))
+tiles.add(Tile((300, 500), "l"))
 
 player = Player()
 player_group = pygame.sprite.GroupSingle()

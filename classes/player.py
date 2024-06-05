@@ -89,7 +89,7 @@ class Player(Entity):
                     self.last_dash = time
                     self.dashing = 5
 
-            if up and self.rect.bottom >= 600 and time - self.last_jump >= 750:
+            if up and time - self.last_jump >= 750:
                 self.last_jump = time
                 self.gravity = -17
                 self.jumping = True
