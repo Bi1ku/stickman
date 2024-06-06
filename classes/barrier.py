@@ -38,7 +38,7 @@ class Barrier():
                         Barrier.reset_speed()
 
                 elif collision_obj.rect.bottom + 10 >= self.player.rect.top >= collision_obj.rect.top - 10:
-                    self.player.gravity = 10
+                    self.player.gravity = 3
 
                 elif self.player.jumping and collision_obj.rect.bottom >= self.player.rect.top:
                     self.player.jumping = False

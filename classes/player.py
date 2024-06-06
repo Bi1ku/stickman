@@ -16,7 +16,7 @@ class Player(Entity):
             "dash": load_asset(f"{GRAPHICS_BASE_PATH}dash/dash_1.png")
         }
 
-        super().__init__(self.animations["idle"][0], (SCREEN_WIDTH / 2, 60))
+        super().__init__(self.animations["idle"][0], (SCREEN_WIDTH / 2, 600))
         self.lazers = pygame.sprite.Group()
 
         # Variables

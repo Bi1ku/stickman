@@ -8,3 +8,4 @@ class Tile(Moveable):
 
     def update(self):
         super().move()
+        super().destroy()
